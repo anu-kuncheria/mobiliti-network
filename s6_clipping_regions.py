@@ -8,14 +8,14 @@ import geopandas as gpd
 
 all_nodes_noferry = pd.read_csv("\Nov2019\for_drive\all_nodes_noferry.csv")
 all_links_noferry = pd.read_csv("\Nov2019\for_drive\all_links_noferry.csv")
+
 # 1. SF Bay Area
 #Arcgis clip based on Rectangular bounding box
 sf_clip_geom = gpd.read_file("..\Nov2019\midstages\clip\SF_Clip.shp")
 a = sf_clip_geom['LINK_ID'].to_list()
 sf_links_noferry = all_links_noferry[all_links_noferry["LINK_ID"].isin(a)]
-sf_links_noferry.to_csv(r"C:\Users\anuku\GSR\UCBerkeley_GSR\Networks_Dataset\networks_dataset_Mobiliti\Nov2019\midstages\sf_links_preprocessed.csv", index = False)
-
-#NODES
+sf_links_noferry.to_csv("\networks_dataset_Mobiliti\Nov2019\midstages\sf_links_preprocessed.csv", index = False)
+#Nodes
 sf_refnodes = sf_links_noferry['REF_IN_ID'].to_list()
 sf_nrefnodes = sf_links_noferry['NREF_IN_ID'].to_list()
 sfnodes = sf_refnodes+ sf_nrefnodes
