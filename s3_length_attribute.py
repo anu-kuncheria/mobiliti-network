@@ -49,15 +49,14 @@ def stringtolist(string):
         d+=d_
     return (d*1000)
 
+
 shape_nodes['LENGTH(meters)'] = shape_nodes.apply(lambda string:stringtolist(string), axis = 1)
 shape_nodes.to_csv("../midstages/shapenodes_linklength.csv", index = False)
-
 # adding link length to all links from the shapenodes calcuated
 all_links_ca_uni  = pd.read_csv("all_links_ca_uni_nolen.csv")
 all_links_ca_uni_length = pd.merge(all_links_ca_uni,shape_nodes, on= 'LINK_ID')
-#CHECK-  all links with same PID has same links length
+#Check-  all links with same PID has same links length
 all_links_ca_uni_length.groupby(['PID','LENGTH(meters)'])['LINK_ID'].count().value_counts()
-
 #Filter for final save
 all_links_ca_uni_length_f = all_links_ca_uni_length[['LINK_ID','ST_NAME','REF_IN_ID','NREF_IN_ID','FUNC_CLASS','DIR_TRAVEL','NUM_PHYS_LANES','SPEED_KPH','CAPACITY','LENGTH(meters)','N_SHAPEPNT']]
 all_links_ca_uni_length_f.rename(columns = {'CAPACITY':'CAPACITY(veh/hour)'}, inplace = True)
