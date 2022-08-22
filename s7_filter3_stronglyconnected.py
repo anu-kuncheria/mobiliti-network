@@ -4,9 +4,9 @@ import csv
 import itertools
 
 #Tasks
-#1. Apply Cy's strongly connected filter to the clipped network.
+#Apply Cy's strongly connected filter to the clipped network.
 
-# Cy's script
+# Cy's filter script
 class Node(object):
   __slots__ = ["NODE_ID", "LAT", "LON"]
   def __init__(self,NODE_ID, LAT, LON):
@@ -201,11 +201,7 @@ def main(args):
     write_nodes_dens(out_dens_file, nodes)
     write_links(out_link_file, links)
 
-if __name__ == "__main__":
-  main(sys.argv)
-
-
-#1. Filter
+#Main - apply to our network
 def full_connected_filter(path1,path2,path3,savename):
     nodes_a = read_nodes(path1)
     links_a = read_links(path2)

@@ -8,7 +8,7 @@ import ast
 
 '''
 # Length is to be calculated from shapenodes. But shapenodes for B,F,T links
-sn = pd.read_csv('nav_street_for_mobiliti_links_shapenodes.csv', names = ['global_id','LINK_ID','nodes'])
+sn = pd.read_csv('nav_street_for_mobiliti_links_shapenodes.csv', names = ['global_id','LINK_ID','nodes']) #shape nodes from Jane
 sn.head(5)  # link id and shape nodes for each link
 #create additional links in shape nodes column
 sn_bi = sn[sn['LINK_ID'].isin(b1['LINK_ID'].values)] #bidirec

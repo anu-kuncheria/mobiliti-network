@@ -145,6 +145,6 @@ def check2(links_df):
 def check3(links_df):
     return links_df.isnull().sum()
 
-#5. Write the file
+#5. Write the modified file
 all_links_ca_uni.rename(columns = {'count':'NUM_PHYS_LANES'}, inplace= True)
 all_links_ca_uni.to_csv('mid_uni_links_correctphyslane.csv', index = False)
