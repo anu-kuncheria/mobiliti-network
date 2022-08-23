@@ -1,12 +1,10 @@
+#Tasks
+#Apply Cy's strongly connected filter to the clipped network.
 import sys
 import os
 import csv
 import itertools
 
-#Tasks
-#Apply Cy's strongly connected filter to the clipped network.
-
-# Cy's filter script
 class Node(object):
   __slots__ = ["NODE_ID", "LAT", "LON"]
   def __init__(self,NODE_ID, LAT, LON):
@@ -225,17 +223,17 @@ def full_connected_filter(path1,path2,path3,savename):
     print("Nodes number processed:", len(nodes_post))
     print("Popdensity Nodes number processed:", len(popdensity_post))
     #writing the final to csv
-    links_post.to_csv("\Nov2019\for_drive\{}_links.csv".format(savename), index = False)
-    nodes_post.to_csv("\Nov2019\for_drive\{}_nodes.csv".format(savename), index = False)
-    popdensity_post.to_csv("\Nov2019\for_drive\{}_popdensity.csv".format(savename), index = False)
+    links_post.to_csv("../midtsages/{}_links.csv".format(savename), index = False)
+    nodes_post.to_csv("../midstages/{}_nodes.csv".format(savename), index = False)
+    popdensity_post.to_csv("../midstages/{}_popdensity.csv".format(savename), index = False)
 
 # Bay Area
-path1 = "..\Nov2019\midstages\sf_nodes_preprocessed_accessrest.csv"
-path2 = "..\Nov2019\midstages\sf_links_preprocessed_accessrest.csv"
-path3 = "..\Nov2019\midstages\sf_popdensity_preprocessed_accessrest.csv"
+path1 = "../midstages/sf_nodes_preprocessed_accessrest.csv"
+path2 = "../midstages/sf_links_preprocessed_accessrest.csv"
+path3 = "../midstages/sf_popdensity_preprocessed_accessrest.csv"
 full_connected_filter(path1,path2,path3,"sf")
 #LA Scag
-path1 = "..\Nov2019\midstages\la_nodes_preprocessed_accessrest.csv"
-path2 = "..\Nov2019\midstages\la_links_preprocessed_accessrest.csv"
-path3 = "..\Nov2019\midstages\la_popdensity_preprocessed_accessrest.csv"
+path1 = "../midstages/la_nodes_preprocessed_accessrest.csv"
+path2 = "../midstages/la_links_preprocessed_accessrest.csv"
+path3 = "../midstages/la_popdensity_preprocessed_accessrest.csv"
 full_connected_filter(path1,path2,path3,"la")

@@ -2,9 +2,9 @@ import pandas as pd
 import os
 
 """
-Refer to July 2021 updates in Documentation
+Refer to July 2021 updates in Documentation 
 """
-alllinks = pd.read_csv('/networks_dataset_Mobiliti/Nov2019/for_drive/september2020/all_links.csv')
+alllinks = pd.read_csv('../Nov2019/for_drive/september2020/all_links.csv')
 # change speeds
 sub1 = alllinks[(alllinks['FUNC_CLASS'].isin([1,2])) & (alllinks['SPEED_KPH'].isin([80]))& (alllinks['CAPACITY(veh/hour)'] > 2000) & (alllinks['RAMP'] == 'N')]['LINK_ID'].values
 sub2 = alllinks[(alllinks['FUNC_CLASS'].isin([1,2])) & (alllinks['SPEED_KPH'].isin([95]))& (alllinks['CAPACITY(veh/hour)'] > 2000) & (alllinks['RAMP'] == 'N')]['LINK_ID'].values

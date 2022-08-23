@@ -1,13 +1,13 @@
+#Tasks
+#Filter out ferry links
+
 import pandas as pd
 import numpy as np
 
-#Tasks
-#1. Filter out ferry links
-
-all_links_ca_uni_length_f = pd.read_csv('all_links_ca.csv')
-partner_links = pd.read_csv("..\midstages\partner_link_ids.csv")
-all_nodes = pd.read_csv("..\Nov2019\for_drive\all_nodes.csv")
-here_links = pd.read_csv('\midstages\all_links.csv')
+all_links_ca_uni_length_f = pd.read_csv('../midstages/all_links_ca.csv')
+partner_links = pd.read_csv("../midstages/partner_link_ids.csv")
+all_nodes = pd.read_csv("../midtstages/all_nodes.csv")
+here_links = pd.read_csv('../midstages/all_links.csv')
 
 # Filter1
 here_links.FERRY_TYPE.unique()  #H - Not a Ferry, B - Boat Ferry, R-- Rail Ferry
@@ -48,5 +48,5 @@ ferry_nodes_remove = ferrynodes_unique - ferrynodes_tokeep_unique
 len(ferry_nodes_remove)
 all_nodes_noferry = all_nodes[~all_nodes['NODE_ID'].isin(ferry_nodes_remove)]
 
-all_links_ca_noferry.to_csv("..\Nov2019\for_drive\all_links_noferry.csv", index = False)
-all_nodes_noferry.to_csv("..\Nov2019\for_drive\all_nodes_noferry.csv", index = False)
+all_links_ca_noferry.to_csv("../midstages/all_links_noferry.csv", index = False)
+all_nodes_noferry.to_csv("../midstages/all_nodes_noferry.csv", index = False)
