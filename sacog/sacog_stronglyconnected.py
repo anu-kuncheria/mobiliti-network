@@ -1,5 +1,8 @@
-#Tasks
-#Apply Cy's strongly connected filter to the clipped network.
+"""
+Tasks
+1. Apply Cy's strongly connected filter to the clipped network.
+"""
+
 import sys
 import networkx
 import pandas as pd
@@ -201,6 +204,7 @@ def main(args):
     write_links(out_link_file, links)
 
 #Main - apply to our network
+
 def full_connected_filter(path1,path2,savename):
     nodes_a = read_nodes(path1)
     links_a = read_links(path2)

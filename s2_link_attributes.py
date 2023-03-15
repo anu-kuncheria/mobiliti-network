@@ -1,12 +1,13 @@
-#Tasks
-#1. Get speed values
-#2. Get capacity values
-
+"""
+Tasks
+1. Get speed values
+2. Get capacity values
+"""
 import pandas as pd
 import numpy as np
 import geopandas as gpd
 
-#Attribute 1 - Defining Free speed
+#Attribute 1 - Defining Free speed based on speed category values
 speed_cat = {1:130, 2:115, 3:95, 4:80,5:60,6:40,7:20,8:5}
 def speed(row):
     return speed_cat[int(row['SPEED_CAT'])]

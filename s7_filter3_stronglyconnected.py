@@ -4,6 +4,7 @@ import sys
 import os
 import csv
 import itertools
+import networkx
 
 class Node(object):
   __slots__ = ["NODE_ID", "LAT", "LON"]

@@ -6,12 +6,12 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 
-def clip(clipboundarypath, popdensitypath, savename, links = all_links_noferry, nodes = all_nodes_noferry):
+def clip(clippedlinkspath, popdensitypath, savename, links = all_links_noferry, nodes = all_nodes_noferry):
     """
-    Input -> Boundary shapefile, Population Density file, 
+    Input -> links are clipped in arcgis, Population Density file, 
     Output -> Nodes, Links, Population Density csv 
     """
-    clip_geom = gpd.read_file(clipboundarypath) #shapefile for the clipping region
+    clip_geom = gpd.read_file(clippedlinkspath) #shapefile for the clipping region
     a = clip_geom['LINK_ID'].to_list()
     links_noferry = links[links["LINK_ID"].isin(a)]
     refnodes = links_noferry['REF_IN_ID'].to_list()
@@ -38,9 +38,9 @@ all_nodes_noferry['LAT']= new[2].str[:-1]
 
 # 1. SF Bay Area
 print("Clipping Sf Bay Area ...")
-clipboundarypath = "../midstages/clip/SF_Clip.shp"
+clippedlinkspath = "../midstages/clip/SF_Clip.shp"
 popdensitypath = "../midstages/sf_popdensity.csv"
-clip(clipboundarypath, popdensitypath, savename = 'sf', links = all_links_noferry, nodes = all_nodes_noferry)
+clip(clippedlinkspath, popdensitypath, savename = 'sf', links = all_links_noferry, nodes = all_nodes_noferry)
 
 # 2. LA SCAG
 print("Clipping LA Scag Region ...")

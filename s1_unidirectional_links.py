@@ -1,45 +1,45 @@
-#Tasks
-#1. Convert bi-directional to uni-directional links
-#2. Calculate the number of lanes from multiple rule based decisions based on here documentation
+"""
+Tasks
+1. Convert bi-directional to uni-directional links
+2. Calculate the number of lanes from multiple rule based decisions based on here documentation
+"""
 
 import pandas as pd
 import numpy as np
 import geopandas as gpd
-'''
-Raw File Preprocessing:
-#California links combined from here - 3Million Links
-streets1 = gpd.read_file('../here_map_11/here_map_11_shapefiles/Streets.shp')
-streets2 = gpd.read_file('../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp')
-streets3 = gpd.read_file('../here_map_13/here_map_13_shapefiles/Streets.shp')
-streets4 = gpd.read_file('../here_map_14/here_map_14_shapefiles/Streets.shp')
-streets5 = gpd.read_file('../here_map_15-20191207T193135Z-001/here_map_15\here_map_15_shapefiles/Streets.shp')
-links = streets1.append(streets2, sort=False)
-links = links.append(streets3,sort=False)
-links = links.append(streets4,sort=False )
-links = links.append(streets5,sort=False )
+from simpledbf import Dbf5
+
+# ======= PreProcessing ===============
+# Combine all link in streets.shp file together to process entire California
+streets_filepaths = ['../here_map_11/here_map_11_shapefiles/Streets.shp','../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp', 
+             '../here_map_13/here_map_13_shapefiles/Streets.shp','../here_map_14/here_map_14_shapefiles/Streets.shp',              
+             '../here_map_15-20191207T193135Z-001/here_map_15\here_map_15_shapefiles/Streets.shp']
+
+links = gpd.GeoDataFrame()
+for path in streets_filepaths:
+    streets = gpd.read_file(path)
+    links = links.append(streets, sort=False)
+
 links.to_csv('../midstages/all_links.csv')
 
-# LANES.dbf file Pg 246, pg 643
-from simpledbf import Dbf5
-lanes1 = Dbf5('../here_map_11/here_map_11_shapefiles/Lane.dbf')
-lanes2 = Dbf5('../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf')
-lanes3 = Dbf5('../here_map_13/here_map_13_shapefiles/Lane.dbf')
-lanes4 = Dbf5('../here_map_14/here_map_14_shapefiles/Lane.dbf')
-lanes5 = Dbf5('../here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Lane.dbf')
-lanes_df1 = lanes1.to_dataframe()
-lanes_df2 = lanes2.to_dataframe()
-lanes_df3 = lanes3.to_dataframe()
-lanes_df4 = lanes4.to_dataframe()
-lanes_df5 = lanes5.to_dataframe()
-lanes_df = lanes_df1.append(lanes_df2)
-lanes_df = lanes_df.append(lanes_df3)
-lanes_df = lanes_df.append(lanes_df4)
-lanes_df = lanes_df.append(lanes_df5)
-lanes_df.to_csv('...midstages/lanes_df.csv')
-'''
+# Combine Lanes.dbf files 
+lane_filepaths = ['../here_map_11/here_map_11_shapefiles/Lane.dbf','../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
+                '../here_map_13/here_map_13_shapefiles/Lane.dbf','../here_map_14/here_map_14_shapefiles/Lane.dbf',              
+                '../here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Lane.dbf']
+
+lanes_df = None
+for path in lane_filepaths:
+    dbf = Dbf5(path)
+    df = dbf.to_dataframe()
+    lanes_df = pd.concat([lanes_df, df], ignore_index=True)
+
+lanes_df.to_csv('../midstages/lanes_df.csv', index=False)
+
+# ============ Link Transformation =================
 #Reading in data
 here_links = pd.read_csv('../midstages/all_links.csv')
-all_links_ca = here_links[['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']]
+cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']
+all_links_ca = here_links[cols_interest]
 lanes_df = pd.read_csv('../midstages/lanes_df.csv')
 
 #Transformations
