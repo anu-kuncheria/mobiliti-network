@@ -24,7 +24,7 @@ if not os.path.isfile('../midstages/all_links.csv'):
 
     links.to_csv('../midstages/all_links.csv')
 
-# Combine Lanes.dbf files 
+# Combine lane files 
 if not os.path.isfile('../midstages/lanes_df.csv'):
     commonpath = '../from_Here/original_HERE'
     lane_filepaths = ['here_map_11/here_map_11_shapefiles/Lane.dbf','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
