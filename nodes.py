@@ -11,7 +11,7 @@ import geopandas as gpd
 
 if not os.path.isfile('../midstages/zlevel_combined.csv'):
     print('====== Started combining ZLevel files ======')
-    zlevelpath = '../from_Here/original_HERE'
+    commonpath = '../from_Here/original_HERE'
     filenames = ['here_map_11/here_map_11_shapefiles/Zlevels.shp', 'here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Zlevels.shp',
     'here_map_13/here_map_13_shapefiles/Zlevels.shp','here_map_14/here_map_14_shapefiles/Zlevels.shp','here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Zlevels.shp' ]
 
