@@ -3,39 +3,44 @@ Tasks
 1. Convert bi-directional to uni-directional links
 2. Calculate the number of lanes from multiple rule based decisions based on here documentation
 """
-
 import pandas as pd
 import numpy as np
 import geopandas as gpd
 from simpledbf import Dbf5
+import os
 
 # ======= PreProcessing ===============
 # Combine all link in streets.shp file together to process entire California
-streets_filepaths = ['../here_map_11/here_map_11_shapefiles/Streets.shp','../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp', 
-             '../here_map_13/here_map_13_shapefiles/Streets.shp','../here_map_14/here_map_14_shapefiles/Streets.shp',              
-             '../here_map_15-20191207T193135Z-001/here_map_15\here_map_15_shapefiles/Streets.shp']
+if not os.path.isfile('../midstages/all_links.csv'):
+    commonpath = '../from_Here/original_HERE'
+    streets_filepaths = ['here_map_11/here_map_11_shapefiles/Streets.shp','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp', 
+                'here_map_13/here_map_13_shapefiles/Streets.shp','here_map_14/here_map_14_shapefiles/Streets.shp',              
+                'here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Streets.shp']
 
-links = gpd.GeoDataFrame()
-for path in streets_filepaths:
-    streets = gpd.read_file(path)
-    links = links.append(streets, sort=False)
+    links = gpd.GeoDataFrame()
+    for path in streets_filepaths:
+        streets = gpd.read_file(os.path.join(commonpath, path))
+        links = links.append(streets, sort=False)
 
-links.to_csv('../midstages/all_links.csv')
+    links.to_csv('../midstages/all_links.csv')
 
 # Combine Lanes.dbf files 
-lane_filepaths = ['../here_map_11/here_map_11_shapefiles/Lane.dbf','../here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
-                '../here_map_13/here_map_13_shapefiles/Lane.dbf','../here_map_14/here_map_14_shapefiles/Lane.dbf',              
-                '../here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Lane.dbf']
+if not os.path.isfile('../midstages/lanes_df.csv'):
+    commonpath = '../from_Here/original_HERE'
+    lane_filepaths = ['here_map_11/here_map_11_shapefiles/Lane.dbf','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
+                    'here_map_13/here_map_13_shapefiles/Lane.dbf','here_map_14/here_map_14_shapefiles/Lane.dbf',              
+                    'here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Lane.dbf']
 
-lanes_df = None
-for path in lane_filepaths:
-    dbf = Dbf5(path)
-    df = dbf.to_dataframe()
-    lanes_df = pd.concat([lanes_df, df], ignore_index=True)
+    lanes_df = None
+    for path in lane_filepaths:
+        dbf = Dbf5(os.path.join(commonpath,path))
+        df = dbf.to_dataframe()
+        lanes_df = pd.concat([lanes_df, df], ignore_index=True)
 
-lanes_df.to_csv('../midstages/lanes_df.csv', index=False)
+    lanes_df.to_csv('../midstages/lanes_df.csv', index=False)
 
 # ============ Link Transformation =================
+print(" ======= Links and Lanes files for Whole California Exists. Reading it in ======== ")
 #Reading in data
 here_links = pd.read_csv('../midstages/all_links.csv')
 cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']
