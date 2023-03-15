@@ -5,7 +5,6 @@ Population density extracted using ArcGIS is formated
 """
 
 import pandas as pd
-import numpy as np
 import os
 import geopandas as gpd
 
@@ -18,7 +17,7 @@ if not os.path.isfile('../midstages/zlevel_combined.csv'):
     print("=== Loading the Zlevel geodataframes =====")
     zleveldfs = []
     for file in filenames:
-        zleveldfs = [gpd.read_file(os.path.join(zlevelpath, file))]
+        zleveldfs = [gpd.read_file(os.path.join(commonpath, file))]
     print("--- Number of dataframes are ---", len(zleveldfs))
     print("Length of first df", len(zleveldfs[0]))
     zlevel_combined = pd.concat([zleveldfs[i] for i in range(len(zleveldfs))])
@@ -48,7 +47,7 @@ nodes.to_csv('../midstages/nodes_all.csv', index = False)
 #nodes.to_file(driver='ESRI Shapefile', filename='nodes_all.shp')
 
 # Calculating Population density for nodes - File extracted using ArcGIS
-nodes_pop = pd.read_csv('../midtages/allnodes_popden.csv')
+nodes_pop = pd.read_csv('../midtages/nodes_pop_density.csv')
 nodes_pop.rename(columns = {'RASTERVALU': 'pop_density'}, inplace = True)
 nodes_pop = nodes_pop.drop(['OBJECTID'], axis = 1)
-nodes_pop.to_csv('../midstages/allnodes_population_density.csv', index = False)
+nodes_pop.to_csv('../midstages/nodes_pop_density.csv', index = False) # replace the file
