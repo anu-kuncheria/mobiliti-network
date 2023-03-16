@@ -9,14 +9,12 @@ import numpy as np
 import geopandas as gpd
 from simpledbf import Dbf5
 
-# ======= PreProcessing ===============
-# Combine all link in streets.shp file together to process entire California
+# ======= Pre-Processing ===============
 if not os.path.isfile('../midstages/all_links.csv'):
     commonpath = '../from_Here/original_HERE'
     streets_filepaths = ['here_map_11/here_map_11_shapefiles/Streets.shp','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp', 
                 'here_map_13/here_map_13_shapefiles/Streets.shp','here_map_14/here_map_14_shapefiles/Streets.shp',              
                 'here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Streets.shp']
-
     links = gpd.GeoDataFrame()
     for path in streets_filepaths:
         streets = gpd.read_file(os.path.join(commonpath, path))
@@ -24,13 +22,11 @@ if not os.path.isfile('../midstages/all_links.csv'):
 
     links.to_csv('../midstages/all_links.csv')
 
-# Combine lane files 
 if not os.path.isfile('../midstages/lanes_df.csv'):
     commonpath = '../from_Here/original_HERE'
     lane_filepaths = ['here_map_11/here_map_11_shapefiles/Lane.dbf','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
                     'here_map_13/here_map_13_shapefiles/Lane.dbf','here_map_14/here_map_14_shapefiles/Lane.dbf',              
                     'here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Lane.dbf']
-
     lanes_df = None
     for path in lane_filepaths:
         dbf = Dbf5(os.path.join(commonpath,path))
@@ -46,7 +42,6 @@ cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', '
 all_links_ca = pd.read_csv('../midstages/all_links.csv', usecols = cols_interest)
 lanes_df = pd.read_csv('../midstages/lanes_df.csv')
 
-#Transformations
 #1. Converting bidirectional links to unidirectional F
 uni_F = all_links_ca[all_links_ca['DIR_TRAVEL'] =='F'] #divide links rows into F,T,B
 uni_T = all_links_ca[all_links_ca['DIR_TRAVEL'] =='T']
@@ -59,7 +54,7 @@ b2['partner_LINK_ID'] = np.arange(7000000000,7000000000+len(b2))
 b1['DIR_TRAVEL'] = 'F'
 b2['DIR_TRAVEL'] = 'T'
 
-# Deciding the physical lanes
+#2. Deciding the number of physical lanes
 bi_dir_phylanes_zero = here_links[(here_links['DIR_TRAVEL']=='B') & (here_links['PHYS_LANES']== 0) ]
 bi_phylzero_lanecat2 = bi_dir_phylanes_zero[bi_dir_phylanes_zero['LANE_CAT']==2][['LINK_ID','PHYS_LANES','TO_LANES','FROM_LANES']]
 bi_phylzero_lanecat3 = bi_dir_phylanes_zero[bi_dir_phylanes_zero['LANE_CAT']==3][['LINK_ID','PHYS_LANES','TO_LANES','FROM_LANES']]
@@ -77,11 +72,12 @@ a2 = a[a['DIR_TRAV']== 'T']
 a1.rename(columns = {'LANE_ID':'count'}, inplace = True)
 a2.rename(columns = {'LANE_ID':'count'}, inplace = True)
 
-#Set1: PHYS_LANES not 0
+#2.1: PHYS_LANES not 0
 # creating num_phy_lanes for PHYS_LANES !=0 from lane.dbf file from a1 and a2 created above from lanes dbf file
 b1 = pd.merge(b1, a1[['LINK_ID','count']], on="LINK_ID", how = 'left')
 b2 = pd.merge(b2, a2[['LINK_ID','count']], on="LINK_ID", how = 'left')
-#Set2: PHYS_LANES equals 0
+
+#2.2: PHYS_LANES equals 0
 def num_phys(row):
     if row['PHYS_LANES']== 0:
         if row['DIR_TRAVEL']== 'F':
@@ -123,31 +119,30 @@ b2['DIR_TRAVEL']= 'F'
 b2.drop(['REF_IN_ID','NREF_IN_ID'], axis = 1, inplace = True)
 b2.rename(columns = {'ref':'REF_IN_ID','nref':'NREF_IN_ID'}, inplace = True)
 
-# 2. Unidirectional links to F
+#3. Unidirectional links to F
 uni_F['count'] = uni_F['PHYS_LANES']
 uni_T['count'] = uni_T['PHYS_LANES']
-uni_F['count'] = uni_F.apply(lambda row:num_phys(row), axis=1) #NO lanes with 0 num of phys lanes
+uni_F['count'] = uni_F.apply(lambda row:num_phys(row), axis=1) #No lanes with 0 num of phys lanes
 uni_T['count'] = uni_T.apply(lambda row:num_phys(row), axis=1)
-#chnaging the direction for T
-uni_T['ref'] = uni_T['NREF_IN_ID']
+uni_T['ref'] = uni_T['NREF_IN_ID'] #changing the direction for T
 uni_T['nref'] = uni_T['REF_IN_ID']
 uni_T['DIR_TRAVEL']= 'F'
 uni_T.drop(['REF_IN_ID','NREF_IN_ID'], axis = 1, inplace = True)
 uni_T.rename(columns = {'ref':'REF_IN_ID','nref':'NREF_IN_ID'}, inplace = True)
 
-#3. Append 4 dataframes
+#Append dataframes
 all_links_ca_uni = b1.append(b2)
 all_links_ca_uni = all_links_ca_uni.append(uni_F)
 all_links_ca_uni = all_links_ca_uni.append(uni_T)
 
-# 4. Sanity Checks
+#Sanity checks
 def check1(links_df):
     print('No of tear drops are:', links_df[links_df['REF_IN_ID'] == links_df['NREF_IN_ID']]['LINK_ID'].count())
 def check2(links_df):
     print('No of links with same ref and nref node ids:', links_df['REF_IN_ID'].equals(links_df['NREF_IN_ID'])*1)
 def check3(links_df):
     return links_df.isnull().sum()
-
-#5. Write the modified file
+    
+#Write the modified file
 all_links_ca_uni.rename(columns = {'count':'NUM_PHYS_LANES'}, inplace= True)
 all_links_ca_uni.to_csv('../midstages/mid_uni_links_correctphyslane.csv', index = False)
