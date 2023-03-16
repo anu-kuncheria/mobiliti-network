@@ -3,7 +3,6 @@
 #2. Clip LA SCAG Region
 
 import pandas as pd
-import numpy as np
 import geopandas as gpd
 
 def clip(clippedlinkspath, popdensitypath, savename, links = all_links_noferry, nodes = all_nodes_noferry):
@@ -21,8 +20,7 @@ def clip(clippedlinkspath, popdensitypath, savename, links = all_links_noferry, 
     city_nodes_noferry = nodes[nodes['NODE_ID'].isin(citynodes_unique)]
     city_pop = pd.read_csv(popdensitypath)
     city_pop_density = city_pop[['NODE_ID','clippedghs']]
-    city_pop_density.rename(columns = {'clippedghs':'pop_density'}, inplace = True)
-    #Write Files 
+    city_pop_density.rename(columns = {'clippedghs':'pop_density'}, inplace = True) 
     city_nodes_noferry.to_csv(f"../midstages/final/{savename}_nodes_preprocessed.csv", index = False)
     links_noferry.to_csv(f"../midstages/final/{savename}_links_preprocessed.csv", index = False)
     city_pop_density.to_csv(f"../midstages/final/{savename}_popdensity_preprocessed.csv", index = False)
@@ -35,13 +33,11 @@ new = all_nodes_noferry['geometry'].str.split(expand=True)
 all_nodes_noferry['LON']= new[1].str[1:]
 all_nodes_noferry['LAT']= new[2].str[:-1]
 
-# 1. SF Bay Area
 print("Clipping Sf Bay Area ...")
 clippedlinkspath = "../midstages/clip/SF_Clip.shp"
 popdensitypath = "../midstages/sf_popdensity.csv"
 clip(clippedlinkspath, popdensitypath, savename = 'sf', links = all_links_noferry, nodes = all_nodes_noferry)
 
-# 2. LA SCAG
 print("Clipping LA Scag Region ...")
 clipath = "../midstages/clip/la_clip.shp"
 popdensitypath = "../midstages/la_podensity.csv"

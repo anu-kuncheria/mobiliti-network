@@ -5,7 +5,6 @@ Tasks
 import os
 import pandas as pd
 import numpy as np
-import geopandas as gpd
 import ast
 from math import radians, cos, sin, asin, sqrt
 
@@ -31,7 +30,6 @@ if not os.path.isfile('../midstages/shapenodes_unidirec.csv'):
     all_links_ca = pd.read_csv('../midstages/all_links.csv', usecols = cols_interest)
     b1 = all_links_ca[all_links_ca['DIR_TRAVEL'] =='B']
 
-    # Preprocessing shape nodes file to make it unidirectional links. Length is calculated fater that
     sn = pd.read_csv('../midstages/nav_street_for_mobiliti_links_shapenodes.csv', names = ['global_id','LINK_ID','nodes']) #shape nodes from Jane
     sn_bi = sn[sn['LINK_ID'].isin(b1['LINK_ID'].values)] #bidirec
     s2 = sn_bi.copy()
@@ -42,14 +40,14 @@ if not os.path.isfile('../midstages/shapenodes_unidirec.csv'):
     shape_nodes_unidirec.to_csv('../midstages/shapenodes_unidirec.csv', index = False)
 
 
-# Calculating length from the unidirectional shapenodes file
+# Calculating length
 shape_nodes = pd.read_csv('../midstages/shapenodes_unidirec.csv') 
 shape_nodes['LENGTH(meters)'] = shape_nodes.apply(lambda string:stringtolist(string), axis = 1)
 all_links_ca_uni  = pd.read_csv("../midstages/all_links_ca_uni_nolen.csv")
 all_links_ca_uni_length = pd.merge(all_links_ca_uni,shape_nodes, on= 'LINK_ID')
 #Check- all links with same PID has same links length
 print(all_links_ca_uni_length.groupby(['PID','LENGTH(meters)'])['LINK_ID'].count().value_counts())
-#Write
+
 all_links_ca_uni_length_f = all_links_ca_uni_length[['LINK_ID','ST_NAME','REF_IN_ID','NREF_IN_ID','FUNC_CLASS','DIR_TRAVEL','NUM_PHYS_LANES','SPEED_KPH','CAPACITY','LENGTH(meters)','N_SHAPEPNT']]
 all_links_ca_uni_length_f.rename(columns = {'CAPACITY':'CAPACITY(veh/hour)'}, inplace = True)
 all_links_ca_uni_length_f.to_csv('../midstages/all_links_ca.csv', index = False)

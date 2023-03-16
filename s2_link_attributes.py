@@ -3,8 +3,6 @@ Tasks
 1. Calculate free speed and capacity for links
 """
 import pandas as pd
-import numpy as np
-import geopandas as gpd
 
 def speed(row):
     return speed_cat[int(row['SPEED_CAT'])]

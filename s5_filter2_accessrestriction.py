@@ -2,16 +2,14 @@
 Tasks
 1.Access restrictions enable
 """
-
 import pandas as pd
-import numpy as np
 
 all_nodes_noferry = pd.read_csv("..\midstages\all_nodes_noferry.csv")
 all_links_noferry = pd.read_csv("..\midstages\all_links_noferry.csv")
 partner_links = pd.read_csv("..\midstages\partner_link_ids.csv")
 
 def accessrest_filter_links(citylinks_df):
-   #1. thru links to include
+   #1. Thru links to include
     print("Length of all_links_noferry: ", len(all_links_noferry))
     thru_traff_yes = all_links[all_links['AR_TRAFF']=='Y']['LINK_ID'].to_list() #whole CA links to add from HERE
     print('Number of thru traffic links in original HeRE :',len(thru_traff_yes))
@@ -26,7 +24,6 @@ def accessrest_filter_links(citylinks_df):
 
     #2. Selected nothru links to include
     thru_traff_no_df = all_links[all_links['AR_TRAFF']=='N'] #whole nothru links
-    #applying my filter
     selected_thruno = thru_traff_no_df[(thru_traff_no_df['PUB_ACCESS']=='Y') & (thru_traff_no_df['AR_AUTO']=='Y') & (thru_traff_no_df['LOW_MBLTY']==2)]
     selected_thruno_links = selected_thruno['LINK_ID'].to_list() # to be selected
     selected_thruno_links_city = citylinks_df[citylinks_df['LINK_ID'].isin(selected_thruno_links)]['LINK_ID'].to_list()

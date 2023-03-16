@@ -1,9 +1,9 @@
-#Tasks
-#Apply Cy's strongly connected filter to the clipped network.
-import sys
+"""
+Tasks
+Apply Cy's strongly connected filter to the clipped network.
+"""
 import os
 import csv
-import itertools
 import networkx
 
 class Node(object):
@@ -200,7 +200,7 @@ def main(args):
     write_nodes_dens(out_dens_file, nodes)
     write_links(out_link_file, links)
 
-#Main - apply to our network
+#Apply to our network
 def full_connected_filter(path1,path2,path3,savename):
     nodes_a = read_nodes(path1)
     links_a = read_links(path2)
@@ -233,6 +233,7 @@ path1 = "../midstages/sf_nodes_preprocessed_accessrest.csv"
 path2 = "../midstages/sf_links_preprocessed_accessrest.csv"
 path3 = "../midstages/sf_popdensity_preprocessed_accessrest.csv"
 full_connected_filter(path1,path2,path3,"sf")
+
 #LA Scag
 path1 = "../midstages/la_nodes_preprocessed_accessrest.csv"
 path2 = "../midstages/la_links_preprocessed_accessrest.csv"
