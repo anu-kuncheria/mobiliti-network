@@ -2,7 +2,7 @@ import pandas as pd
 import os
 
 """
-Refer to July 2021 updates in Documentation 
+Refer to July 2021 updates in Documentation for more details 
 """
 alllinks = pd.read_csv('../Nov2019/for_drive/september2020/all_links.csv')
 # change speeds
