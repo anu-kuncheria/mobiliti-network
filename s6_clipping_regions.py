@@ -8,7 +8,7 @@ import geopandas as gpd
 
 def clip(clippedlinkspath, popdensitypath, savename, links = all_links_noferry, nodes = all_nodes_noferry):
     """
-    Input -> links are clipped in arcgis, Population Density file, 
+    Input -> links are clipped in Arcgis
     Output -> Nodes, Links, Population Density csv 
     """
     clip_geom = gpd.read_file(clippedlinkspath) #shapefile for the clipping region
@@ -22,11 +22,10 @@ def clip(clippedlinkspath, popdensitypath, savename, links = all_links_noferry, 
     city_pop = pd.read_csv(popdensitypath)
     city_pop_density = city_pop[['NODE_ID','clippedghs']]
     city_pop_density.rename(columns = {'clippedghs':'pop_density'}, inplace = True)
-
     #Write Files 
-    city_nodes_noferry.to_csv("{}_nodes_preprocessed.csv".format(savename), index = False)
-    links_noferry.to_csv("{}_links_preprocessed.csv".format(savename), index = False)
-    city_pop_density.to_csv("{}_popdensity_preprocessed.csv".format(savename), index = False)
+    city_nodes_noferry.to_csv(f"../midstages/final/{savename}_nodes_preprocessed.csv", index = False)
+    links_noferry.to_csv(f"../midstages/final/{savename}_links_preprocessed.csv", index = False)
+    city_pop_density.to_csv(f"../midstages/final/{savename}_popdensity_preprocessed.csv", index = False)
 
 
 #All links and nodes

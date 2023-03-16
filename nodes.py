@@ -3,9 +3,8 @@ Nodes are derived from Navstreet Zlevel file
 Steps: Zlevel file > Drop nodeids with 0 > Combined 5 files into 1 node file for entire CA
 Population density extracted using ArcGIS is formated
 """
-
-import pandas as pd
 import os
+import pandas as pd
 import geopandas as gpd
 
 if not os.path.isfile('../midstages/zlevel_combined.csv'):
@@ -43,7 +42,7 @@ print(nodes['Z_LEVEL'].value_counts())
 print(len(nodes.drop_duplicates(subset='geometry', keep="first"))) # length ofnode ids that are duplicated in geometry. This shows that some intersections with same geometry having differnt z levels are given differnt node ids.
 
 #Write to csv and shapefile
-nodes.to_csv('../midstages/nodes_all.csv', index = False)
+nodes.to_csv('../midstages/all_nodes.csv', index = False)
 #nodes.to_file(driver='ESRI Shapefile', filename='nodes_all.shp')
 
 # Calculating Population density for nodes - File extracted using ArcGIS

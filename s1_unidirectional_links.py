@@ -3,11 +3,11 @@ Tasks
 1. Convert bi-directional to uni-directional links
 2. Calculate the number of lanes from multiple rule based decisions based on here documentation
 """
+import os
 import pandas as pd
 import numpy as np
 import geopandas as gpd
 from simpledbf import Dbf5
-import os
 
 # ======= PreProcessing ===============
 # Combine all link in streets.shp file together to process entire California
@@ -42,9 +42,8 @@ if not os.path.isfile('../midstages/lanes_df.csv'):
 # ============ Link Transformation =================
 print(" ======= Links and Lanes files for Whole California Exists. Reading it in ======== ")
 #Reading in data
-here_links = pd.read_csv('../midstages/all_links.csv')
 cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']
-all_links_ca = here_links[cols_interest]
+all_links_ca = pd.read_csv('../midstages/all_links.csv', usecols = cols_interest)
 lanes_df = pd.read_csv('../midstages/lanes_df.csv')
 
 #Transformations
@@ -111,7 +110,7 @@ b2['count'] = b2.apply(lambda row:num_phys(row), axis=1)
 
 #Create partner link ids
 partners_links = b2[['PID','LINK_ID','partner_LINK_ID']] #LINKS PARTNERS FOR BI DIRECTIONAL
-partners_links.to_csv("..\midstages\partner_link_ids.csv", index = False)
+partners_links.to_csv("../midstages/partner_link_ids.csv", index = False)
 
 b2.drop(columns = 'LINK_ID', inplace = True)
 b2.rename(columns = {'partner_LINK_ID': 'LINK_ID'}, inplace = True)
