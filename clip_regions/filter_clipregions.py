@@ -26,7 +26,7 @@ def geom_shp(linksgeom, savepath = None):
 
 def process_boundary(taz_boundary_path):
     """
-    Process the boundary if only 1 boundary file is given
+    Process boundary if only 1 boundary file is given
     eg: sanfrancisco, scag, sandiego etc
     """
     taz_shapefile = gpd.read_file(taz_boundary_path)
@@ -48,18 +48,16 @@ def process_boundary(taz_boundary_path):
 
 def process_two_boundary(taz_boundary_path1, taz_boundary_path2):
     """
-    Process the boundary if two boundary file is given and a joint network is needed. 
+    Process boundary if two boundary file is given and a joint network is needed. 
     eg: sandiego + scag 
     """
     #convert to crs wgs85 
     boundary1 = gpd.read_file(taz_boundary_path1)
     if not boundary1.crs ==  'EPSG:4326' :
         boundary1 = boundary1.to_crs(4326) 
-        
     boundary2 = gpd.read_file(taz_boundary_path2)
     if not boundary2.crs ==  'EPSG:4326' :
         boundary2 = boundary2.to_crs(4326) 
-        
     #join the two
     combined_boundary = gpd.GeoDataFrame(pd.concat([boundary1[['geometry']],boundary2[['geometry']]]
                                   , ignore_index=True) )
@@ -69,7 +67,6 @@ def process_two_boundary(taz_boundary_path1, taz_boundary_path2):
     taz_square = taz_dissolve['geometry'].envelope
     bufferlength = taz_square.length/50 # buffer width
     taz_buffer = taz_square.buffer(bufferlength)
-
     fig, ax = plt.subplots(figsize = (10,8)) 
     taz_buffer.plot(ax = ax, alpha = 0.1, color = 'orange')
     taz_square.plot(ax = ax, alpha = 0.3)
