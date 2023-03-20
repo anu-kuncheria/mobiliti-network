@@ -16,17 +16,15 @@ savepath_final = config["write"]["savepath_final"]
 nodesname = config["write"]["nodes_filename"]
 cityname = config["write"]["cityname"]
 
-
 def extract_raster_value( lon, lat, raster_path):
     with rasterio.open(raster_path) as rds:
         transformer = Transformer.from_crs("EPSG:4326", rds.crs, always_xy=True)  # convert coordinate to raster projection
         xx, yy = transformer.transform(lon, lat)
         value = list(rds.sample([(xx, yy)]))[0] # get value from grid
         return value[0]
-
     
 clipped_nodes = pd.read_csv(os.path.join(savepath_final, cityname + '_' + nodesname))
-print(" ===== Extracting the raster values to nodes ====== ")
+print(" ===== Extracting raster pop density values to nodes ====== ")
 clipped_nodes['popdensity'] = clipped_nodes.apply(lambda x: extract_raster_value(x['LON'], x['LAT'],raster_path), axis = 1)
 #replace negavtive values with 0. These are null values in tiff
 clipped_nodes['popdensity'] = np.where(clipped_nodes['popdensity']<0, 0, clipped_nodes['popdensity'])
