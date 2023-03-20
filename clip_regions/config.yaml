@@ -14,7 +14,7 @@ write:
  
 
 popdensity:
-  raster: "/Users/akuncheria/Documents/GSR-2021Feb/UCBerkeley_GSR/Networks_Dataset/data/popdensity/sacog/GHS_POP_E2015_GLOBE_R2022A_54009_100_V1_0_R5_C8.tif"
+  raster: "../../data/popdensity/sacog/GHS_POP_E2015_GLOBE_R2022A_54009_100_V1_0_R5_C8.tif"
   popdensity_filename : "popdensity.csv"
 
 
