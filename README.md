@@ -1,6 +1,6 @@
 # mobiliti-network
 
-mobiliti-network contains the scripts to convert Here Map to Mobiliti Map. The following is the order in which these steps are executed. 
+This repository contains the scripts to convert Here Map to Mobiliti Map. The following is the order in which these steps are executed. 
 
 ```mermaid
 graph LR;
