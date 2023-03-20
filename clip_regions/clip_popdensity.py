@@ -31,7 +31,6 @@ clipped_nodes['popdensity'] = clipped_nodes.apply(lambda x: extract_raster_value
 #replace negavtive values with 0. These are null values in tiff
 clipped_nodes['popdensity'] = np.where(clipped_nodes['popdensity']<0, 0, clipped_nodes['popdensity'])
 
-#write
 fcr.write_file(clipped_nodes[['NODE_ID', 'popdensity']], savepath= savepath_final, savename = cityname + '_' + popdensity_name )
 
 

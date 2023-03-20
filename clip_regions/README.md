@@ -4,7 +4,7 @@ To proceed, ensure that the paths for all the required files are specified in th
 
 ```mermaid
 graph LR;
-    clip_links_nodes.py-->clip_popdensity;
+    clip_links_nodes.py-->clip_popdensity.py;
 ```
 
 
