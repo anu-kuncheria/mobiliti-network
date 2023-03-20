@@ -1,14 +1,10 @@
 """
 Tasks
-1. Apply Cy's strongly connected filter to the clipped network.
+Apply strongly connected filter to the clipped network.
 """
-
-import sys
-import networkx
-import pandas as pd
 import os
 import csv
-import itertools
+import networkx
 
 class Node(object):
   __slots__ = ["NODE_ID", "LAT", "LON"]
@@ -35,9 +31,9 @@ def read_nodes(node_file):
   return nodes
 
 class Link(object):
-  __slots__ = ['LINK_ID', 'ST_NAME', 'REF_IN_ID', 'NREF_IN_ID','FUNC_CLASS','NUM_PHYS_LANES', 'SPEED_KPH', 'LENGTH', 'CAPACITY','RAMP']
+  __slots__ = ['LINK_ID', 'ST_NAME', 'REF_IN_ID', 'NREF_IN_ID','FUNC_CLASS','NUM_PHYS_LANES', 'SPEED_KPH', 'CAPACITY','LENGTH', 'N_SHAPEPNT']
   def __init__(self, LINK_ID, ST_NAME, REF_IN_ID, NREF_IN_ID,
-               FUNC_CLASS, NUM_PHYS_LANES, SPEED_KPH, LENGTH, CAPACITY, RAMP):
+               FUNC_CLASS, NUM_PHYS_LANES, SPEED_KPH, LENGTH,CAPACITY):
     self.LINK_ID = LINK_ID
     self.ST_NAME = ST_NAME
     self.REF_IN_ID = REF_IN_ID
@@ -47,7 +43,6 @@ class Link(object):
     self.SPEED_KPH =SPEED_KPH
     self.LENGTH = LENGTH
     self.CAPACITY = CAPACITY
-    self.RAMP = RAMP
 
 def csv_split(s):
   return list(csv.reader([s], skipinitialspace=True))[0]
@@ -65,14 +60,13 @@ def read_links(link_file):
     name    = entry[1]
     src     = int(entry[2]) #startnode
     dst     = int(entry[3]) #end node
-    fc      = entry[4] #fc
+    fc      = int(entry[4]) #fc
     assert entry[5] == "F" # forward direction
     lanes   = int(float(entry[6]))
     speed   = float(entry[7]) * 1000 / (60 * 60) # convert km/h to m/s
     length  = float(entry[8])
     cap     = int(float(entry[9]))
-    ramp = entry[10]
-    links.append(Link(link_id,name,src, dst,fc,lanes,speed,length,cap, ramp))
+    links.append(Link(link_id,name,src, dst,fc,lanes,speed, length, cap))
   return links
 
 def filter_nodes(nodes, keep_ids):
@@ -165,6 +159,7 @@ def create_link_gdf(links, nodes):
   gdf.crs = {"init": "epsg:4326"}
   print("Converting links to epsg:26910 coordinate system ...")
   gdf.to_crs({"init": "epsg:26910"}, inplace=True)
+
   return gdf
 
 
@@ -202,36 +197,5 @@ def main(args):
     write_nodes_lat_lon_x_y(out_node_file, nodes, node_gdf)
     write_nodes_dens(out_dens_file, nodes)
     write_links(out_link_file, links)
-
-#Main - apply to our network
-
-def full_connected_filter(path1,path2,savename):
-    nodes_a = read_nodes(path1)
-    links_a = read_links(path2)
-    nodes_b, links_b = keep_largest_scc(nodes_a, links_a) #new set
-    nodes_diff = diff_nodes(nodes_a, nodes_b)
-    links_diff = diff_links(links_a, links_b)
-    n_id_diff = []
-    for i in range(0, len(nodes_diff)):
-        n_id_diff.append(nodes_diff[i].NODE_ID)
-    l_id_diff = []
-    for i in range(0, len(links_diff)):
-        l_id_diff.append(links_diff[i].LINK_ID)
-    # removing the not connecetd links and nodes found above to the final file i have
-    nodes_pre = pd.read_csv(path1)
-    links_pre = pd.read_csv(path2)
-    links_post = links_pre[~links_pre['LINK_ID'].isin(l_id_diff)]
-    nodes_post = nodes_pre[~nodes_pre['NODE_ID'].isin(n_id_diff)]
-    print("Links number processed:", len(links_post))
-    print("Nodes number processed:", len(nodes_post))
-    #writing the final to csv
-    links_post.to_csv("mid_processing/{}_links.csv".format(savename), index = False)
-    nodes_post.to_csv("mid_processing/{}_nodes.csv".format(savename), index = False)
-
-path1 = "mid_processing/sacog_nodes_preprocess.csv" # nodes path
-path2 = "mid_processing/sacog_links_preprocess.csv" # links path
-full_connected_filter(path1,path2,"sacog")
-
-
 
 

@@ -4,9 +4,9 @@ Tasks
 """
 import pandas as pd
 
-all_nodes_noferry = pd.read_csv("..\midstages\all_nodes_noferry.csv")
-all_links_noferry = pd.read_csv("..\midstages\all_links_noferry.csv")
-partner_links = pd.read_csv("..\midstages\partner_link_ids.csv")
+all_nodes_noferry = pd.read_csv("../data/midstages/all_nodes_noferry.csv")
+all_links_noferry = pd.read_csv("../data/midstages/all_links_noferry.csv")
+partner_links = pd.read_csv("../data/midstages/partner_link_ids.csv")
 
 def accessrest_filter_links(citylinks_df):
    #1. Thru links to include
@@ -56,6 +56,6 @@ all_links_noferry_thrufilter = accessrest_filter_links(all_links_noferry)
 all_nodes_noferry_thrufilter  = accessrest_filter_nodes(all_nodes_noferry,all_links_noferry_thrufilter)
 partner_links_thrufilter = partner_links[partner_links.LINK_ID.isin(all_links_noferry_thrufilter.LINK_ID)]
 
-all_links_noferry_thrufilter.to_csv("../midstages/all_links_noferry_thrufilter.csv", index = False)
-all_nodes_noferry_thrufilter.to_csv("../midstages/all_nodes_noferry_thrufilter.csv", index = False)
-partner_links_thrufilter.to_csv("../midstages/partner_links_thrufilter.csv", index = False)
+all_links_noferry_thrufilter.to_csv("../data/midstages/all_links_noferry_thrufilter.csv", index = False)
+all_nodes_noferry_thrufilter.to_csv("../data/midstages/all_nodes_noferry_thrufilter.csv", index = False)
+partner_links_thrufilter.to_csv("../data/midstages/partner_links_thrufilter.csv", index = False)

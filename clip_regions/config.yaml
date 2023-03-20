@@ -1,0 +1,24 @@
+clip:
+  boundary: "../../data/boundary/sacog/SACOGTransportation_Analysis_Zones_2007.shp"
+  alllinks_processed: "../../data/july2021/all_links.csv" #processed links and nodes file for whole California
+  alllinks_processed_geom: "../../data/july2021/alllinksgeom_gdf.shp"
+  allnodes_processed: "../../data/july2021/all_nodes.csv"
+  allnodes_popdensity: ""
+
+write:
+  cityname: "sacog"
+  savepath_final: "../../data/sacog/final"
+  savepath_mid: "../../data/sacog/midstage"
+  links_filename: "links.csv"
+  nodes_filename: "nodes.csv"
+ 
+
+popdensity:
+  raster: "/Users/akuncheria/Documents/GSR-2021Feb/UCBerkeley_GSR/Networks_Dataset/data/popdensity/sacog/GHS_POP_E2015_GLOBE_R2022A_54009_100_V1_0_R5_C8.tif"
+  popdensity_filename : "popdensity.csv"
+
+
+
+
+
+  

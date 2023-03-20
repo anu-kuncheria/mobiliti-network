@@ -10,19 +10,20 @@ import geopandas as gpd
 from simpledbf import Dbf5
 
 # ======= Pre-Processing ===============
-if not os.path.isfile('../midstages/all_links.csv'):
+if not os.path.isfile('../data/midstages/all_links.csv'):
     commonpath = '../from_Here/original_HERE'
     streets_filepaths = ['here_map_11/here_map_11_shapefiles/Streets.shp','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Streets.shp', 
                 'here_map_13/here_map_13_shapefiles/Streets.shp','here_map_14/here_map_14_shapefiles/Streets.shp',              
                 'here_map_15-20191207T193135Z-001/here_map_15/here_map_15_shapefiles/Streets.shp']
+    
     links = gpd.GeoDataFrame()
     for path in streets_filepaths:
         streets = gpd.read_file(os.path.join(commonpath, path))
         links = links.append(streets, sort=False)
 
-    links.to_csv('../midstages/all_links.csv')
+    links.to_csv('../data/midstages/all_links.csv')
 
-if not os.path.isfile('../midstages/lanes_df.csv'):
+if not os.path.isfile('../data/midstages/lanes_df.csv'):
     commonpath = '../from_Here/original_HERE'
     lane_filepaths = ['here_map_11/here_map_11_shapefiles/Lane.dbf','here_map_12-20191207T191053Z-001/here_map_12/here_map_12_shapefiles/Lane.dbf',              
                     'here_map_13/here_map_13_shapefiles/Lane.dbf','here_map_14/here_map_14_shapefiles/Lane.dbf',              
@@ -33,14 +34,14 @@ if not os.path.isfile('../midstages/lanes_df.csv'):
         df = dbf.to_dataframe()
         lanes_df = pd.concat([lanes_df, df], ignore_index=True)
 
-    lanes_df.to_csv('../midstages/lanes_df.csv', index=False)
+    lanes_df.to_csv('../data/midstages/lanes_df.csv', index=False)
 
 # ============ Link Transformation =================
 print(" ======= Links and Lanes files for Whole California Exists. Reading it in ======== ")
 #Reading in data
 cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']
-all_links_ca = pd.read_csv('../midstages/all_links.csv', usecols = cols_interest)
-lanes_df = pd.read_csv('../midstages/lanes_df.csv')
+all_links_ca = pd.read_csv('../data/midstages/all_links.csv', usecols = cols_interest)
+lanes_df = pd.read_csv('../data/midstages/lanes_df.csv')
 
 #1. Converting bidirectional links to unidirectional F
 uni_F = all_links_ca[all_links_ca['DIR_TRAVEL'] =='F'] #divide links rows into F,T,B
@@ -106,7 +107,7 @@ b2['count'] = b2.apply(lambda row:num_phys(row), axis=1)
 
 #Create partner link ids
 partners_links = b2[['PID','LINK_ID','partner_LINK_ID']] #LINKS PARTNERS FOR BI DIRECTIONAL
-partners_links.to_csv("../midstages/partner_link_ids.csv", index = False)
+partners_links.to_csv("../data/midstages/partner_link_ids.csv", index = False)
 
 b2.drop(columns = 'LINK_ID', inplace = True)
 b2.rename(columns = {'partner_LINK_ID': 'LINK_ID'}, inplace = True)
@@ -145,4 +146,4 @@ def check3(links_df):
     
 #Write the modified file
 all_links_ca_uni.rename(columns = {'count':'NUM_PHYS_LANES'}, inplace= True)
-all_links_ca_uni.to_csv('../midstages/mid_uni_links_correctphyslane.csv', index = False)
+all_links_ca_uni.to_csv('../data/midstages/mid_uni_links_correctphyslane.csv', index = False)

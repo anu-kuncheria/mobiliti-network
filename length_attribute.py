@@ -25,29 +25,29 @@ def stringtolist(string):
         d+=d_
     return (d*1000)
 
-if not os.path.isfile('../midstages/shapenodes_unidirec.csv'):
+if not os.path.isfile('../data/midstages/shapenodes_unidirec.csv'):
     cols_interest = ['LINK_ID', 'ST_NAME','REF_IN_ID', 'NREF_IN_ID', 'N_SHAPEPNT', 'FUNC_CLASS', 'SPEED_CAT','LANE_CAT','DIR_TRAVEL','PHYS_LANES','FROM_LANES','TO_LANES','geometry']
-    all_links_ca = pd.read_csv('../midstages/all_links.csv', usecols = cols_interest)
+    all_links_ca = pd.read_csv('../data/midstages/all_links.csv', usecols = cols_interest)
     b1 = all_links_ca[all_links_ca['DIR_TRAVEL'] =='B']
 
-    sn = pd.read_csv('../midstages/nav_street_for_mobiliti_links_shapenodes.csv', names = ['global_id','LINK_ID','nodes']) #shape nodes from Jane
+    sn = pd.read_csv('../data/midstages/nav_street_for_mobiliti_links_shapenodes.csv', names = ['global_id','LINK_ID','nodes']) #shape nodes from Jane
     sn_bi = sn[sn['LINK_ID'].isin(b1['LINK_ID'].values)] #bidirec
     s2 = sn_bi.copy()
     s2['LINK_ID'] = np.arange(7000000000,7000000000+len(sn_bi))
     sn_FT = sn[~sn['LINK_ID'].isin(b1['LINK_ID'].values)]  #unidirec FT links
     shape_nodes_unidirec = sn_FT.append([s2,sn_bi])
     shape_nodes_unidirec = shape_nodes_unidirec.drop('global_id', axis = 1)
-    shape_nodes_unidirec.to_csv('../midstages/shapenodes_unidirec.csv', index = False)
+    shape_nodes_unidirec.to_csv('../data/midstages/shapenodes_unidirec.csv', index = False)
 
 
 # Calculating length
-shape_nodes = pd.read_csv('../midstages/shapenodes_unidirec.csv') 
+shape_nodes = pd.read_csv('../data/midstages/shapenodes_unidirec.csv') 
 shape_nodes['LENGTH(meters)'] = shape_nodes.apply(lambda string:stringtolist(string), axis = 1)
-all_links_ca_uni  = pd.read_csv("../midstages/all_links_ca_uni_nolen.csv")
+all_links_ca_uni  = pd.read_csv("../data/midstages/all_links_ca_uni_nolen.csv")
 all_links_ca_uni_length = pd.merge(all_links_ca_uni,shape_nodes, on= 'LINK_ID')
 #Check- all links with same PID has same links length
 print(all_links_ca_uni_length.groupby(['PID','LENGTH(meters)'])['LINK_ID'].count().value_counts())
 
 all_links_ca_uni_length_f = all_links_ca_uni_length[['LINK_ID','ST_NAME','REF_IN_ID','NREF_IN_ID','FUNC_CLASS','DIR_TRAVEL','NUM_PHYS_LANES','SPEED_KPH','CAPACITY','LENGTH(meters)','N_SHAPEPNT']]
 all_links_ca_uni_length_f.rename(columns = {'CAPACITY':'CAPACITY(veh/hour)'}, inplace = True)
-all_links_ca_uni_length_f.to_csv('../midstages/all_links_ca.csv', index = False)
+all_links_ca_uni_length_f.to_csv('../data/midstages/all_links_ca.csv', index = False)
