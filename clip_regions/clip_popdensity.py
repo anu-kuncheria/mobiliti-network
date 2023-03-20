@@ -26,7 +26,7 @@ def extract_raster_value( lon, lat, raster_path):
 
     
 clipped_nodes = pd.read_csv(os.path.join(savepath_final, cityname + '_' + nodesname))
-print("===== Extracting the raster values to nodes ======")
+print(" ===== Extracting the raster values to nodes ====== ")
 clipped_nodes['popdensity'] = clipped_nodes.apply(lambda x: extract_raster_value(x['LON'], x['LAT'],raster_path), axis = 1)
 #replace negavtive values with 0. These are null values in tiff
 clipped_nodes['popdensity'] = np.where(clipped_nodes['popdensity']<0, 0, clipped_nodes['popdensity'])
