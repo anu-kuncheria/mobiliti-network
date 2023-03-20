@@ -25,16 +25,18 @@ if not os.path.isfile(alllinksgeom_path):
     alllinksgeom = fcr.links_geom(alllinks, allnodes)
     alllinksgeom_gdf = fcr.geom_shp(alllinksgeom, savepath = "../../data/july2021")           
 
-#clipping links for the region of interest
-print("====== Loading in Links for clipping ========")
-clipboundary = fcr.process_boundary(boundary_path) # rectangular boundary generated in ArcGIS
+
+print("====== Creating the rectangular buffer boundary from the TAZ shapefile ========")
+clipboundary = fcr.process_boundary(boundary_path) #rectangular buffer boundary
+
+print("====== Clipping links to the the boundary ========")
 alllinksgeom_gdf = gpd.read_file(alllinksgeom_path)
 links_clipped = fcr.clip_links(alllinksgeom_gdf,clipboundary)
 if not os.path.exists(savepath_mid):
     os.makedirs(savepath_mid)
 links_clipped.to_csv(os.path.join(savepath_mid, "preprocess_clippedlinks.csv"), index = False)
 
-#clipping nodes
+print("====== Clipping nodes based on clipped links file ========")
 allnodes = pd.read_csv(allnodes_path)
 sac_refnodes = links_clipped['REF_IN_ID'].to_list()
 sac_nrefnodes = links_clipped['NREF_IN_ID'].to_list()
@@ -43,8 +45,7 @@ sacnodes_unique = set(sacnodes)
 nodes_clipped = allnodes[allnodes['NODE_ID'].isin(sacnodes_unique)]
 nodes_clipped.to_csv(os.path.join(savepath_mid, "preprocess_clippednodes.csv"), index = False)
 
-# applying fully connected network filter
-print("==== Cliiping to make Strongly connected network =====")
+print("==== Applying the strongly connected network filter =====")
 nodes_path = os.path.join(savepath_mid, "preprocess_clippednodes.csv")
 links_path = os.path.join(savepath_mid, "preprocess_clippedlinks.csv")
 links_connected, nodes_connected = fcr.full_connected_filter(nodes_path, links_path)
@@ -57,13 +58,12 @@ cols_interest = ['LINK_ID', 'ST_NAME', 'REF_IN_ID', 'NREF_IN_ID', 'FUNC_CLASS',
        'DIR_TRAVEL', 'NUM_PHYS_LANES', 'SPEED_KPH', 'LENGTH(meters)',
        'CAPACITY(veh/hour)', 'RAMP']
 links_connected = links_connected[cols_interest]
-#write
+
 if not os.path.exists(savepath_final):
     os.makedirs(savepath_final)
-
 final_list = [[links_connected, linksname], [nodes_connected, nodesname]]
 for f in final_list:
     fcr.write_file(f[0], savepath= savepath_final, savename = cityname + '_' + f[1] )
-print("======== Finished writing links and nodes files ======") 
+print("======== Finished writing the clipped links and nodes files ======") 
 
 
