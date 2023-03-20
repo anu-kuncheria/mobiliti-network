@@ -22,7 +22,7 @@ def extract_raster_value( lon, lat, raster_path):
         transformer = Transformer.from_crs("EPSG:4326", rds.crs, always_xy=True)  # convert coordinate to raster projection
         xx, yy = transformer.transform(lon, lat)
         value = list(rds.sample([(xx, yy)]))[0] # get value from grid
-        return value
+        return value[0]
 
     
 clipped_nodes = pd.read_csv(os.path.join(savepath_final, cityname + '_' + nodesname))
@@ -32,7 +32,7 @@ clipped_nodes['popdensity'] = clipped_nodes.apply(lambda x: extract_raster_value
 clipped_nodes['popdensity'] = np.where(clipped_nodes['popdensity']<0, 0, clipped_nodes['popdensity'])
 
 fcr.write_file(clipped_nodes[['NODE_ID', 'popdensity']], savepath= savepath_final, savename = cityname + '_' + popdensity_name )
-
+print(" ===== Finised writing to the directory ====== ")
 
 
 

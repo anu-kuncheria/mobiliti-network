@@ -1,3 +1,8 @@
+"""
+Generate networks for two regions combined. 
+Eg - SACOG and San Diego together. 
+"""
+
 import yaml
 import pandas as pd
 import geopandas as gpd
@@ -11,12 +16,17 @@ config = yaml.load(a_yaml_file, Loader=yaml.FullLoader)
 alllinks_path =  config["clip"]["alllinks_processed"]
 alllinksgeom_path =  config["clip"]["alllinks_processed_geom"]
 allnodes_path = config["clip"]["allnodes_processed"]
-boundary_path = config["clip"]["boundary"]
-cityname = config["write"]["cityname"]
 linksname = config["write"]["links_filename"]
 nodesname = config["write"]["nodes_filename"]
+
+boundary_path_one = config["clip"]["boundary"]
+boundary_path_two = config["clip"]["boundary_two"]
+cityname_one = config["write"]["cityname"]
+cityname_two = config["write"]["cityname_two"]
+cityname = cityname_one + '_' + cityname_two
 savepath_final = '../../data/' + cityname + '/final'
 savepath_mid = '../../data/' + cityname + '/midstage'
+
 
 if not os.path.isfile(alllinksgeom_path):
     print("Creating geom for all CA links")
@@ -27,7 +37,7 @@ if not os.path.isfile(alllinksgeom_path):
 
 
 print("====== Creating the rectangular buffer boundary from the TAZ shapefile ========")
-clipboundary = fcr.process_boundary(boundary_path) #rectangular buffer boundary
+clipboundary = fcr.process_two_boundary(boundary_path_one, boundary_path_two) #rectangular buffer boundary combined
 
 print("====== Clipping links to the the boundary ========")
 alllinksgeom_gdf = gpd.read_file(alllinksgeom_path)
