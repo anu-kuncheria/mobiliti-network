@@ -4,8 +4,6 @@ This repo lists the steps taken to transform Here Map to Mobiliti Map.
 
 ```mermaid
 graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+    unidirectional_links-->link_attributes;
+    link_attributes-->length_attribute;
 ```
